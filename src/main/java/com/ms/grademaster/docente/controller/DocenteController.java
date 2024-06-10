@@ -58,6 +58,14 @@ public class DocenteController {
         return ResponseEntity.ok(respuestaGeneral);
     }
 
+    @GetMapping("bucar-docente-nombre")
+    public ResponseEntity<RespuestaGeneralDto> getBuscarDocenteNombre(@RequestParam("nombre") String nombre){
+        RespuestaGeneralDto respuestaGeneral =  new RespuestaGeneralDto();
+        respuestaGeneral.setData(iConsultarDocenteService.buscarDocentesNombre(nombre));
+        respuestaGeneral.setEstado(EstadoRespuestaEnum.OK);
+        return ResponseEntity.ok(respuestaGeneral);
+    }
+
     @GetMapping("allMateriasDocente")
     public ResponseEntity<RespuestaGeneralDto> getAllMateriasDocente(@RequestParam("codigoDocente") String codigoDocente){
         RespuestaGeneralDto respuestaGeneral =  new RespuestaGeneralDto();

@@ -42,12 +42,20 @@ public class CrearDocenteService implements ICrearDocenteService {
     }
 
     @Override
+    @Transactional
     public void asignarMateriasDocente(AsignarMateriasDto asignarMateriasDto) {
+        if(!asignarMateriasDto.getMateriasNoAsignadas().isEmpty()){
+            asignarMateriasDto.getMateriasNoAsignadas().forEach(materia -> {
+                if(materia.getCodigo() != null){
+                    docenteMateriaRepository.deleteByCodigoMateriaEntityFk_Codigo(materia.getCodigo());
+                }
+            });
+        }
         docenteMateriaRepository.saveAll(docenteMateriaMapper.objectsToEntity(
                 materiaMapper.listDtoToListEntity(asignarMateriasDto.getMateriasAsignar()),
                 docenteMapper.dtoToEntity(asignarMateriasDto.getDocenteDto()),
                 semestreMapper.dtoToEntity(asignarMateriasDto.getSemestreDto()),
-                estadoRepository.findByNombre("HABILITADO")
+                estadoRepository.findByNombre("ACTIVO")
         ));
     }
 }

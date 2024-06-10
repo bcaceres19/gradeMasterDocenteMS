@@ -16,4 +16,6 @@ public class AsignarMateriasDto {
 
     private List<MateriaDto> materiasAsignar;
 
+    private List<MateriaDto> materiasNoAsignadas;
+
 }

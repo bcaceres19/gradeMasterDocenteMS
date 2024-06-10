@@ -3,6 +3,7 @@ package com.ms.grademaster.docente.service.impl;
 import com.ms.grademaster.comons.dto.DocenteDto;
 import com.ms.grademaster.comons.dto.EstudianteDto;
 import com.ms.grademaster.comons.dto.MateriaDto;
+import com.ms.grademaster.comons.dto.MateriasHorasDto;
 import com.ms.grademaster.comons.mapper.DocenteMapper;
 import com.ms.grademaster.comons.mapper.EstudianteMapper;
 import com.ms.grademaster.comons.mapper.MateriaMapper;
@@ -38,7 +39,7 @@ public class ConsultarDocenteService implements IConsultarDocenteService {
     @Override
     public List<DocenteDto> buscarDocentesHabilitados() {
         try {
-            return docenteMapper.listEntityToListDto( docenteRepository.findAllByEstadoEntityFk_Nombre("HABILITADO"));
+            return docenteMapper.listEntityToListDto( docenteRepository.findAllByEstadoEntityFk_Nombre("ACTIVO"));
         }catch (Exception e){
             log.error(e);
         }
@@ -48,9 +49,8 @@ public class ConsultarDocenteService implements IConsultarDocenteService {
     @Override
     public MateriasDocenteDto buscarMateriasPorDocente(String codigoDocente) {
         MateriasDocenteDto materiaDocente = new MateriasDocenteDto();
-        log.error(materiaRepository.findAllHabilitados("HABILITADO"));
-        List<MateriaDto> materias = materiaMapper.listEntityToListDto(materiaRepository.findAllHabilitados("HABILITADO"));
-        List<MateriaDto> materiasAsignadas = materiaMapper.lisObjectToListMateriaDocente(docenteMateriaRepository.buscarMateriasPorDocente(codigoDocente, "HABILITADO"));
+        List<MateriaDto> materias = materiaMapper.listEntityToListDto(materiaRepository.findAllHabilitados("ACTIVO"));
+        List<MateriaDto> materiasAsignadas = materiaMapper.lisObjectToListMateriaDocente(docenteMateriaRepository.buscarMateriasPorDocente(codigoDocente, "ACTIVO"));
         materiaDocente.setMateriasAsignadas(materiasAsignadas);
         materiaDocente.setMateriasNoAsignadas(materias.stream().filter(materia -> materiasAsignadas.stream().noneMatch(materiaAsig -> materiaAsig.getCodigo().equals(materia.getCodigo()))).collect(Collectors.toList()));
         return materiaDocente;
@@ -62,7 +62,12 @@ public class ConsultarDocenteService implements IConsultarDocenteService {
     }
 
     @Override
-    public List<MateriaDto> materiasAsiganadasDocente(String codigoDocente) {
-        return  materiaMapper.lisObjectToListMateriaDocente(docenteMateriaRepository.buscarMateriasPorDocente(codigoDocente, "HABILITADO"));
+    public List<MateriasHorasDto> materiasAsiganadasDocente(String codigoDocente) {
+        return  materiaMapper.listObjectToListMateriasHorasDto(docenteMateriaRepository.buscarMateriasPorDocente(codigoDocente, "ACTIVO"));
+    }
+
+    @Override
+    public List<DocenteDto> buscarDocentesNombre(String nombre) {
+        return docenteMapper.listEntityToListDto(docenteRepository.buscarDocentesNombre(nombre));
     }
 }
